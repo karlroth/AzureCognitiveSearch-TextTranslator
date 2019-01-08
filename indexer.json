@@ -1,0 +1,47 @@
+{
+  "name":"demoindexer",	
+  "dataSourceName" : "demodata",
+  "targetIndexName" : "demoindex",
+  "skillsetName" : "demoskillset",
+  "fieldMappings" : [
+        {
+          "sourceFieldName" : "metadata_storage_path",
+          "targetFieldName" : "id",
+          "mappingFunction" : 
+            { "name" : "base64Encode" }
+        },
+        {
+          "sourceFieldName" : "content",
+          "targetFieldName" : "content"
+        }
+   ],
+  "outputFieldMappings" : 
+  [
+        {
+          "sourceFieldName" : "/document/organizations", 
+          "targetFieldName" : "organizations"
+        },
+        {
+          "sourceFieldName" : "/document/pages/*/keyPhrases/*", 
+          "targetFieldName" : "keyPhrases"
+        },
+        {
+            "sourceFieldName": "/document/languageCode",
+            "targetFieldName": "languageCode"
+        },
+         {
+            "sourceFieldName": "/document/translatedText",
+            "targetFieldName": "translatedText"
+        }    
+  ],
+  "parameters":
+  {
+  	"maxFailedItems":-1,
+  	"maxFailedItemsPerBatch":-1,
+  	"configuration": 
+    {
+    	"dataToExtract": "contentAndMetadata",
+     	"imageAction": "generateNormalizedImages"
+		}
+  }
+}

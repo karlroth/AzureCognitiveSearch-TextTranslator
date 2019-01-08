@@ -1,0 +1,98 @@
+{
+  "description": 
+  "Extract entities, detect language and extract key-phrases. Also, we translate from other languages to English",
+  "skills":
+  [
+    {
+      "@odata.type": "#Microsoft.Skills.Text.NamedEntityRecognitionSkill",
+      "categories": [ "Organization" ],
+      "defaultLanguageCode": "en",
+      "inputs": [
+        {
+          "name": "text", "source": "/document/content"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "organizations", "targetName": "organizations"
+        }
+      ]
+    },
+    {
+      "@odata.type": "#Microsoft.Skills.Text.LanguageDetectionSkill",
+      "inputs": [
+        {
+          "name": "text", "source": "/document/content"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "languageCode",
+          "targetName": "languageCode"
+        }
+      ]
+    },
+    {
+      "@odata.type": "#Microsoft.Skills.Text.SplitSkill",
+      "textSplitMode" : "pages", 
+      "maximumPageLength": 4000,
+      "inputs": [
+      {
+        "name": "text",
+        "source": "/document/content"
+      },
+      { 
+        "name": "languageCode",
+        "source": "/document/languageCode"
+      }
+    ],
+    "outputs": [
+      {
+            "name": "textItems",
+            "targetName": "pages"
+      }
+    ]
+  },
+  {
+      "@odata.type": "#Microsoft.Skills.Text.KeyPhraseExtractionSkill",
+      "context": "/document/pages/*",
+      "inputs": [
+        {
+          "name": "text", "source": "/document/pages/*"
+        },
+        {
+          "name":"languageCode", "source": "/document/languageCode"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "keyPhrases",
+          "targetName": "keyPhrases"
+        }
+      ]
+    }, 
+    {
+        "@odata.type": "#Microsoft.Skills.Custom.WebApiSkill",
+        "description": "Our new translator custom skill",
+        "uri": "[my-uri]",
+        "batchSize":1,
+        "context": "/document",
+        "inputs": [
+          {
+            "name": "text",
+            "source": "/document/content"
+          },
+          {
+            "name": "language",
+            "source": "/document/languageCode"
+          }
+        ],
+        "outputs": [
+          {
+            "name": "text",
+            "targetName": "translatedText"
+          }
+        ]
+      }
+  ]
+}
